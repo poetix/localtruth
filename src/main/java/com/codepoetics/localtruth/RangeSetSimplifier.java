@@ -14,29 +14,43 @@ public final class RangeSetSimplifier<T extends Comparable<T>> {
 		return new RangeSetSimplifier<T>();
 	}
 	
-	public Set<Range<T>> simplify(Collection<Range<T>> ranges) {
+	public Set<Range<T>> toDiscreteRanges(Collection<Range<T>> ranges) {
 		ImmutableSet.Builder<Range<T>> result = ImmutableSet.builder();
 		Collection<Range<T>> remainder = new LinkedList<Range<T>>(ranges);
 		Iterator<Range<T>> iterator = remainder.iterator();
 		
         while(iterator.hasNext()) {
-            result.add(mergeConnected(iterator, getNewAccumulator(iterator)));
+        	Range<T> accumulator = iterator.next();
+    		iterator.remove();
+            result.add(mergeAllConnected(iterator, accumulator));
     		iterator = remainder.iterator();
         }
         
         return result.build();
     }
+	
+	public Set<Range<T>> mergeToDiscreteRanges(Collection<Range<T>> rangeSetA, Collection<Range<T>> rangeSetB) {
+		if (rangeSetA.size() < rangeSetB.size()) {
+			return _mergeToDiscreteRanges(rangeSetA, rangeSetB);
+		}
+		return _mergeToDiscreteRanges(rangeSetB, rangeSetA);
+	}
+	
+	private Set<Range<T>> _mergeToDiscreteRanges(Collection<Range<T>> smaller, Collection<Range<T>> larger) {
+		ImmutableSet.Builder<Range<T>> result = ImmutableSet.builder();
+		Collection<Range<T>> remainder = new LinkedList<Range<T>>(larger);
+		
+		for (Range<T> newRange : smaller) {
+			result.add(mergeAllConnected(remainder.iterator(), newRange));
+		}
+        result.addAll(remainder);
+        return result.build();
+    }
 
-	private Range<T> mergeConnected(Iterator<Range<T>> iterator, Range<T> accumulator) {
+	private Range<T> mergeAllConnected(Iterator<Range<T>> iterator, Range<T> accumulator) {
 		while (iterator.hasNext()) {
 		    accumulator = mergeIfConnected(iterator, accumulator);
 		}
-		return accumulator;
-	}
-
-	private Range<T> getNewAccumulator(Iterator<Range<T>> iterator) {
-		Range<T> accumulator = iterator.next();
-		iterator.remove();
 		return accumulator;
 	}
 

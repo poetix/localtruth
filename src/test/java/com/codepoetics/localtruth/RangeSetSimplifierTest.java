@@ -20,7 +20,7 @@ public class RangeSetSimplifierTest {
     an_empty_list_of_ranges_is_simplified_to_an_empty_set() {
         Collection<Range<Integer>> ranges = newArrayList();
         
-		assertThat(simplifier.simplify(ranges).size(), Matchers.is(0));
+		assertThat(simplifier.toDiscreteRanges(ranges).size(), Matchers.is(0));
     }
 	
 	@SuppressWarnings("unchecked")
@@ -30,7 +30,7 @@ public class RangeSetSimplifierTest {
         		Ranges.closed(0, 3),
         		Ranges.closed(3, 5));
         
-		assertThat(simplifier.simplify(ranges), aSetOfRangesContaining(Ranges.closed(0, 5)));
+		assertThat(simplifier.toDiscreteRanges(ranges), aSetOfRangesContaining(Ranges.closed(0, 5)));
     }
     
     @SuppressWarnings("unchecked")
@@ -40,7 +40,30 @@ public class RangeSetSimplifierTest {
     			Ranges.closed(0, 2),
     			Ranges.closed(1, 3));
     	
-    	assertThat(simplifier.simplify(ranges), aSetOfRangesContaining(Ranges.closed(0, 3)));
+    	assertThat(simplifier.toDiscreteRanges(ranges), aSetOfRangesContaining(Ranges.closed(0, 3)));
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test public void
+    ranges_contained_in_other_ranges_are_absorbed() {
+    	Collection<Range<Integer>> ranges = newArrayList(
+    			Ranges.closed(0, 4),
+    			Ranges.closed(1, 3));
+    	
+    	assertThat(simplifier.toDiscreteRanges(ranges), aSetOfRangesContaining(Ranges.closed(0, 4)));
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test public void
+    multiple_connected_ranges_are_concatenated() {
+    	Collection<Range<Integer>> ranges = newArrayList(
+    			Ranges.closed(0, 1),
+    			Ranges.closed(1, 2),
+    			Ranges.closed(2, 3),
+    			Ranges.closed(3, 4),
+    			Ranges.closed(4, 5));
+    	
+    	assertThat(simplifier.toDiscreteRanges(ranges), aSetOfRangesContaining(Ranges.closed(0, 5)));
     }
     
     @SuppressWarnings("unchecked")
@@ -50,7 +73,7 @@ public class RangeSetSimplifierTest {
     			Ranges.open(0, 1),
     			Ranges.open(1, 2));
     	
-        assertThat(simplifier.simplify(ranges), aSetOfRangesContaining(Ranges.open(0, 1), Ranges.open(1, 2)));
+        assertThat(simplifier.toDiscreteRanges(ranges), aSetOfRangesContaining(Ranges.open(0, 1), Ranges.open(1, 2)));
     }
     
     @SuppressWarnings("unchecked")
@@ -62,7 +85,7 @@ public class RangeSetSimplifierTest {
     			Ranges.closed(8, 9),
     			Ranges.closed(1, 2));
     	
-        assertThat(simplifier.simplify(ranges), aSetOfRangesContaining(Ranges.closed(0, 2), Ranges.closed(8, 10)));
+        assertThat(simplifier.toDiscreteRanges(ranges), aSetOfRangesContaining(Ranges.closed(0, 2), Ranges.closed(8, 10)));
     }
     
     private Matcher<Iterable<Range<Integer>>> aSetOfRangesContaining(Range<Integer>...ranges) {
