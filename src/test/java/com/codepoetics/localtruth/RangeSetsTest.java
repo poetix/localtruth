@@ -14,7 +14,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class RangeSetsTest {
     
     @Test public void
-    an_empty_list_of_ranges_is_simplified_to_an_empty_set() {
+    an_empty_list_of_ranges_is_coalesced_to_an_empty_set() {
         Collection<Range<Integer>> ranges = newArrayList();
         
         assertThat(RangeSets.containing(ranges).size(), Matchers.is(0));
