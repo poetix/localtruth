@@ -5,7 +5,6 @@ import java.util.Iterator;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 import com.google.common.collect.Sets;
@@ -49,7 +48,7 @@ public final class RangeSets {
     private static <T extends Comparable<T>> Function<Range<T>, Iterable<Range<T>>> intersectionWith(final Iterable<Range<T>> otherRanges) {
         return new Function<Range<T>, Iterable<Range<T>>>() {
             @Override public Iterable<Range<T>> apply(Range<T> range) {
-                return Iterables.transform(otherRanges, intersectionWith(range));
+                return transform(otherRanges, intersectionWith(range));
             }
         };
     }
@@ -65,24 +64,27 @@ public final class RangeSets {
         };
     }
 	
-	private static <T extends Comparable<T>> RangeSet<T> coalesce(Collection<Range<T>> ranges, Collection<Range<T>> coalesced) {
-	    Collection<Range<T>> mutableCoalesced = Lists.newLinkedList(coalesced);
+	private static <T extends Comparable<T>> RangeSet<T> coalesce(final Collection<Range<T>> ranges, final Collection<Range<T>> coalesced) {
+	    Collection<Range<T>> result = Lists.newLinkedList(coalesced);
 		for (Range<T> range : ranges) {
-		    coalesceWith(range, mutableCoalesced);
+		    result = coalesceWith(range, result);
 		}
-		return new RangeSet<T>(mutableCoalesced);
+		return new RangeSet<T>(result);
 	}
 	
-	private static <T extends Comparable<T>> void coalesceWith(Range<T> range, Collection<Range<T>> coalesced) {
+	private static <T extends Comparable<T>> Collection<Range<T>> coalesceWith(final Range<T> range, final Collection<Range<T>> coalesced) {
 	    Range<T> accumulator = range;
+	    Collection<Range<T>> result = Lists.newLinkedList();
 	    Iterator<Range<T>> iterator = coalesced.iterator();
 	    while (iterator.hasNext()) {
 	        Range<T> other = iterator.next();
             if (accumulator.isConnected(other)) {
-                iterator.remove();
                 accumulator = accumulator.span(other);
+            } else {
+                result.add(other);
             }
 	    }
-	    coalesced.add(accumulator);
+	    result.add(accumulator);
+	    return result;
     }
 }
