@@ -29,13 +29,13 @@ public final class RangeSets {
         Collection<Range<T>> coalesced = Lists.newLinkedList();
         return coalesce(ranges, coalesced);
     }
-	
-	public static <T extends Comparable<T>> RangeSet<T> union(RangeSet<T> rangeSetA, RangeSet<T> rangeSetB) {
-	    if (rangeSetA.size() < rangeSetB.size()) {
-	        return coalesce(rangeSetA.ranges(), rangeSetB.ranges());
-	    }
-	    return coalesce(rangeSetB.ranges(), rangeSetA.ranges());
-	}
+    
+    public static <T extends Comparable<T>> RangeSet<T> union(RangeSet<T> rangeSetA, RangeSet<T> rangeSetB) {
+        if (rangeSetA.size() < rangeSetB.size()) {
+            return coalesce(rangeSetA.ranges(), rangeSetB.ranges());
+        }
+        return coalesce(rangeSetB.ranges(), rangeSetA.ranges());
+    }
     
     public static <T extends Comparable<T>> RangeSet<T> intersection(final RangeSet<T> self, final RangeSet<T> other) {
         Iterable<Range<T>> intersections = filter(concat(transform(self.ranges(),
@@ -62,26 +62,26 @@ public final class RangeSets {
             }
         };
     }
-	
-	private static <T extends Comparable<T>> RangeSet<T> coalesce(final Collection<Range<T>> ranges, final Collection<Range<T>> coalesced) {
-	    Collection<Range<T>> result = Lists.newLinkedList(coalesced);
-		for (Range<T> range : ranges) {
-		    result = coalesceWith(range, result);
-		}
-		return new RangeSet<T>(result);
-	}
-	
-	private static <T extends Comparable<T>> Collection<Range<T>> coalesceWith(final Range<T> range, final Collection<Range<T>> coalesced) {
-	    Range<T> accumulator = range;
-	    Collection<Range<T>> result = Lists.newLinkedList();
-	    for (Range<T> other : coalesced) {
+    
+    private static <T extends Comparable<T>> RangeSet<T> coalesce(final Collection<Range<T>> ranges, final Collection<Range<T>> coalesced) {
+        Collection<Range<T>> result = Lists.newLinkedList(coalesced);
+        for (Range<T> range : ranges) {
+            result = coalesceWith(range, result);
+        }
+        return new RangeSet<T>(result);
+    }
+    
+    private static <T extends Comparable<T>> Collection<Range<T>> coalesceWith(final Range<T> range, final Collection<Range<T>> coalesced) {
+        Range<T> accumulator = range;
+        Collection<Range<T>> result = Lists.newLinkedList();
+        for (Range<T> other : coalesced) {
             if (accumulator.isConnected(other)) {
                 accumulator = accumulator.span(other);
             } else {
                 result.add(other);
             }
-	    }
-	    result.add(accumulator);
-	    return result;
+        }
+        result.add(accumulator);
+        return result;
     }
 }

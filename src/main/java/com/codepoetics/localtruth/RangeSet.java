@@ -31,8 +31,8 @@ public class RangeSet<T extends Comparable<T>> implements Predicate<T> {
     }
     
     @Override public String toString() {
-    	Joiner joiner = Joiner.on(", ");
-    	return "RangeSet: " + joiner.join(ranges);
+        Joiner joiner = Joiner.on(", ");
+        return "RangeSet: " + joiner.join(ranges);
     }
 
     @Override

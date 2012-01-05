@@ -11,18 +11,18 @@ import com.google.common.collect.Range;
 
 public final class ARangeSet {
     public static <T extends Comparable<T>> Matcher<RangeSet<T>> withTheRanges(final Range<T>...rangeArgs) {
-		return new TypeSafeMatcher<RangeSet<T>>() {
-			@Override
-			public void describeTo(Description description) {
-				description.appendText("A multirange containing the ranges ");
-				description.appendValueList("[", ",", "]", rangeArgs);
-			}
-			
-			@Override
-			public boolean matchesSafely(RangeSet<T> item) {
-				return Matchers.<Range<T>>hasItems(rangeArgs).matches(item.ranges());
-			}
-		};
+        return new TypeSafeMatcher<RangeSet<T>>() {
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("A multirange containing the ranges ");
+                description.appendValueList("[", ",", "]", rangeArgs);
+            }
+            
+            @Override
+            public boolean matchesSafely(RangeSet<T> item) {
+                return Matchers.<Range<T>>hasItems(rangeArgs).matches(item.ranges());
+            }
+        };
     }
     
     public static <T extends Comparable<T>> Matcher<RangeSet<T>> containingTheElements(final T...elements) {
