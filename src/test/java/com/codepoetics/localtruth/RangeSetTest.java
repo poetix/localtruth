@@ -23,6 +23,5 @@ public class RangeSetTest {
         
         assertThat(rangeSet, ARangeSet.containingNoneOfTheElements(-1, 3, 7));
     }
-    
 
 }
