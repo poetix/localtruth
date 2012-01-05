@@ -28,13 +28,9 @@ public final class RangeSets {
     }
     
     public static <T extends Comparable<T>> RangeSet<T> containing(Collection<Range<T>> ranges) {
-        return coalesce(ranges);
+        Collection<Range<T>> coalesced = Lists.newLinkedList();
+        return coalesce(ranges, coalesced);
     }
-	
-	public static <T extends Comparable<T>> RangeSet<T> coalesce(Collection<Range<T>> ranges) {
-	    Collection<Range<T>> coalesced = Lists.newLinkedList();
-	    return coalesce(ranges, coalesced);
-	}
 	
 	public static <T extends Comparable<T>> RangeSet<T> union(RangeSet<T> rangeSetA, RangeSet<T> rangeSetB) {
 	    if (rangeSetA.size() < rangeSetB.size()) {
