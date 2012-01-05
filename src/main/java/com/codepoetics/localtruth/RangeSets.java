@@ -1,7 +1,6 @@
 package com.codepoetics.localtruth;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
@@ -38,7 +37,7 @@ public final class RangeSets {
 	    return coalesce(rangeSetB.ranges(), rangeSetA.ranges());
 	}
     
-    public static <T extends Comparable<T>> RangeSet<T> intersection(RangeSet<T> self, RangeSet<T> other) {
+    public static <T extends Comparable<T>> RangeSet<T> intersection(final RangeSet<T> self, final RangeSet<T> other) {
         Iterable<Range<T>> intersections = filter(concat(transform(self.ranges(),
                                                                    intersectionWith(other.ranges()))),
                                                   notNull());
@@ -75,9 +74,7 @@ public final class RangeSets {
 	private static <T extends Comparable<T>> Collection<Range<T>> coalesceWith(final Range<T> range, final Collection<Range<T>> coalesced) {
 	    Range<T> accumulator = range;
 	    Collection<Range<T>> result = Lists.newLinkedList();
-	    Iterator<Range<T>> iterator = coalesced.iterator();
-	    while (iterator.hasNext()) {
-	        Range<T> other = iterator.next();
+	    for (Range<T> other : coalesced) {
             if (accumulator.isConnected(other)) {
                 accumulator = accumulator.span(other);
             } else {
